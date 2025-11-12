@@ -35,7 +35,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const geist = Geist({ subsets: ["latin"] })
   
   return (
     <html lang="en" className="dark">
