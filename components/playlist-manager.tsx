@@ -210,7 +210,17 @@ export function PlaylistManager() {
           <p className="text-muted-foreground mb-6">
             Create and manage your media playlists with ease. Sign in with Google to get started.
           </p>
-          <Button onClick={googleSignIn} className="w-full">
+          <Button 
+            onClick={async () => {
+              try {
+                await googleSignIn();
+              } catch (error) {
+                console.error("Sign-in failed:", error);
+                // Error is handled in the auth context, no need to show it here
+              }
+            }} 
+            className="w-full"
+          >
             Sign in with Google
           </Button>
         </div>

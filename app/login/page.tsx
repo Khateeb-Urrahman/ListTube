@@ -1,14 +1,17 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default function LoginPage() {
   const { user, googleSignIn } = useAuth()
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (user) {
@@ -18,9 +21,14 @@ export default function LoginPage() {
 
   const handleSignIn = async () => {
     try {
+      setError(null)
+      setIsLoading(true)
       await googleSignIn()
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error signing in:", error)
+      setError("Failed to sign in. Please try again.")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -43,12 +51,18 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
           <Button 
             onClick={handleSignIn} 
             className="w-full"
             variant="default"
+            disabled={isLoading}
           >
-            Sign in with Google
+            {isLoading ? "Signing in..." : "Sign in with Google"}
           </Button>
         </CardContent>
       </Card>
