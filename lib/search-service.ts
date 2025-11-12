@@ -30,7 +30,7 @@ export async function getYouTubeVideoInfo(url: string): Promise<MediaItem | null
     // Return mock data for demonstration
     // In a real app, you would fetch actual data from YouTube API
     return {
-      id: videoId,
+      id: `youtube_${videoId}`, // Prefix to ensure uniqueness
       title: `YouTube Video: ${videoId}`,
       description: `This is a YouTube video with ID ${videoId}. In a real application, this would contain the actual video description.`,
       thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,

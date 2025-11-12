@@ -12,6 +12,7 @@ import { useAuth } from "@/contexts/auth-context"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
@@ -380,6 +381,9 @@ export function PlaylistManager() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>YouTube Video Preview</DialogTitle>
+            <DialogDescription>
+              Preview of the YouTube video you're about to add to your playlist
+            </DialogDescription>
           </DialogHeader>
           {selectedVideo && (
             <div className="space-y-4">
