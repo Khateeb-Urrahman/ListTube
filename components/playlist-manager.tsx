@@ -29,8 +29,6 @@ export function PlaylistManager() {
   const [error, setError] = useState<string | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [selectedVideo, setSelectedVideo] = useState<MediaItem | null>(null)
-  const [isVideoDialogOpen, setIsVideoDialogOpen] = useState(false)
-  const [videoToPlay, setVideoToPlay] = useState<MediaItem | null>(null)
 
   // Load playlists on component mount and when user changes
   useEffect(() => {
@@ -196,11 +194,6 @@ export function PlaylistManager() {
     }
   }
 
-  const handlePlayVideo = (video: MediaItem) => {
-    setVideoToPlay(video)
-    setIsVideoDialogOpen(true)
-  }
-
   if (authLoading || isPlaylistsLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -325,7 +318,15 @@ export function PlaylistManager() {
                     <div key={item.id} className="flex gap-3 p-3 border rounded-lg">
                       <div 
                         className="bg-muted rounded-md w-16 h-16 flex-shrink-0 overflow-hidden cursor-pointer"
-                        onClick={() => handlePlayVideo(item)}
+                        onClick={() => {
+                          if (item.id.startsWith('youtube_')) {
+                            window.open(`https://www.youtube.com/watch?v=${item.id.replace('youtube_', '')}`, '_blank');
+                          } else {
+                            // For non-YouTube videos, we could implement a different playback method
+                            // For now, we'll just log to console
+                            console.log('Non-YouTube video clicked:', item);
+                          }
+                        }}
                       >
                         <img 
                           src={item.thumbnail} 
@@ -385,7 +386,15 @@ export function PlaylistManager() {
                       <div className="text-muted-foreground w-6">#{index + 1}</div>
                       <div 
                         className="bg-muted rounded-md w-16 h-16 flex-shrink-0 overflow-hidden cursor-pointer"
-                        onClick={() => handlePlayVideo(item)}
+                        onClick={() => {
+                          if (item.id.startsWith('youtube_')) {
+                            window.open(`https://www.youtube.com/watch?v=${item.id.replace('youtube_', '')}`, '_blank');
+                          } else {
+                            // For non-YouTube videos, we could implement a different playback method
+                            // For now, we'll just log to console
+                            console.log('Non-YouTube video clicked:', item);
+                          }
+                        }}
                       >
                         <img 
                           src={item.thumbnail} 
@@ -435,7 +444,15 @@ export function PlaylistManager() {
                   src={selectedVideo.thumbnail} 
                   alt={selectedVideo.title}
                   className="w-full h-full object-cover cursor-pointer"
-                  onClick={() => handlePlayVideo(selectedVideo)}
+                  onClick={() => {
+                    if (selectedVideo.id.startsWith('youtube_')) {
+                      window.open(`https://www.youtube.com/watch?v=${selectedVideo.id.replace('youtube_', '')}`, '_blank');
+                    } else {
+                      // For non-YouTube videos, we could implement a different playback method
+                      // For now, we'll just log to console
+                      console.log('Non-YouTube video clicked:', selectedVideo);
+                    }
+                  }}
                 />
               </div>
               <div>
@@ -465,56 +482,6 @@ export function PlaylistManager() {
                   Select a playlist to add this video
                 </p>
               )}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* YouTube Video Player Dialog */}
-      <Dialog open={isVideoDialogOpen} onOpenChange={setIsVideoDialogOpen}>
-        <DialogContent className="max-w-full max-h-full w-full h-full m-0 rounded-none flex flex-col">
-          <DialogHeader>
-            <DialogTitle>Now Playing</DialogTitle>
-            <DialogDescription>
-              {videoToPlay?.title}
-            </DialogDescription>
-          </DialogHeader>
-          {videoToPlay && (
-            <div className="space-y-4 flex-1 flex flex-col">
-              <div className="flex-1 bg-muted rounded-md overflow-hidden">
-                {videoToPlay.id.startsWith('youtube_') ? (
-                  <iframe
-                    src={`https://www.youtube.com/embed/${videoToPlay.id.replace('youtube_', '')}?autoplay=1&rel=0`}
-                    className="w-full h-full min-h-[400px]"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                    allowFullScreen
-                    title={videoToPlay.title}
-                  />
-                ) : (
-                  <img 
-                    src={videoToPlay.thumbnail} 
-                    alt={videoToPlay.title}
-                    className="w-full h-full object-cover min-h-[400px]"
-                  />
-                )}
-              </div>
-              <div className="flex gap-2">
-                <Button 
-                  onClick={() => handleAddToPlaylist(videoToPlay)}
-                  disabled={!activePlaylist}
-                  className="flex-1"
-                >
-                  Add to Playlist
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setIsVideoDialogOpen(false)}
-                  className="flex-1"
-                >
-                  Close
-                </Button>
-              </div>
             </div>
           )}
         </DialogContent>
