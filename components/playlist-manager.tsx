@@ -472,7 +472,7 @@ export function PlaylistManager() {
 
       {/* YouTube Video Player Dialog */}
       <Dialog open={isVideoDialogOpen} onOpenChange={setIsVideoDialogOpen}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-full max-h-full w-full h-full m-0 rounded-none flex flex-col">
           <DialogHeader>
             <DialogTitle>Now Playing</DialogTitle>
             <DialogDescription>
@@ -480,14 +480,14 @@ export function PlaylistManager() {
             </DialogDescription>
           </DialogHeader>
           {videoToPlay && (
-            <div className="space-y-4">
-              <div className="relative aspect-video bg-muted rounded-md overflow-hidden">
+            <div className="space-y-4 flex-1 flex flex-col">
+              <div className="flex-1 bg-muted rounded-md overflow-hidden">
                 {videoToPlay.id.startsWith('youtube_') ? (
                   <iframe
-                    src={`https://www.youtube.com/embed/${videoToPlay.id.replace('youtube_', '')}`}
-                    className="w-full h-full"
+                    src={`https://www.youtube.com/embed/${videoToPlay.id.replace('youtube_', '')}?autoplay=1&rel=0`}
+                    className="w-full h-full min-h-[400px]"
                     frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                     allowFullScreen
                     title={videoToPlay.title}
                   />
@@ -495,7 +495,7 @@ export function PlaylistManager() {
                   <img 
                     src={videoToPlay.thumbnail} 
                     alt={videoToPlay.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover min-h-[400px]"
                   />
                 )}
               </div>
