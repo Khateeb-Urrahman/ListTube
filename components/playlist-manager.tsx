@@ -328,7 +328,7 @@ export function PlaylistManager() {
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium truncate w-full">{item.title}</h4>
+                        <h4 className="font-medium truncate w-full text-foreground bg-red-500/10">{item.title}</h4>
                         <p className="text-sm text-muted-foreground line-clamp-2">
                           {item.description}
                         </p>
@@ -385,7 +385,7 @@ export function PlaylistManager() {
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium truncate w-full">{item.title}</h4>
+                        <h4 className="font-medium truncate w-full text-foreground bg-red-500/10">{item.title}</h4>
                         <p className="text-sm text-muted-foreground line-clamp-1">
                           {item.description}
                         </p>
@@ -425,7 +425,7 @@ export function PlaylistManager() {
                 />
               </div>
               <div>
-                <h3 className="font-medium line-clamp-2 w-full">{selectedVideo.title}</h3>
+                <h3 className="font-medium line-clamp-2 w-full text-foreground bg-red-500/10">{selectedVideo.title}</h3>
                 <p className="text-sm text-muted-foreground mt-1 line-clamp-3">
                   {selectedVideo.description}
                 </p>
