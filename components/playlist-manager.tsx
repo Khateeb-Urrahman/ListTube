@@ -29,6 +29,8 @@ export function PlaylistManager() {
   const [error, setError] = useState<string | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [selectedVideo, setSelectedVideo] = useState<MediaItem | null>(null)
+  const [isVideoDialogOpen, setIsVideoDialogOpen] = useState(false)
+  const [videoToPlay, setVideoToPlay] = useState<MediaItem | null>(null)
 
   // Load playlists on component mount and when user changes
   useEffect(() => {
@@ -194,6 +196,11 @@ export function PlaylistManager() {
     }
   }
 
+  const handlePlayVideo = (video: MediaItem) => {
+    setVideoToPlay(video)
+    setIsVideoDialogOpen(true)
+  }
+
   if (authLoading || isPlaylistsLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -316,7 +323,10 @@ export function PlaylistManager() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {searchResults.map((item) => (
                     <div key={item.id} className="flex gap-3 p-3 border rounded-lg">
-                      <div className="bg-muted rounded-md w-16 h-16 flex-shrink-0 overflow-hidden">
+                      <div 
+                        className="bg-muted rounded-md w-16 h-16 flex-shrink-0 overflow-hidden cursor-pointer"
+                        onClick={() => handlePlayVideo(item)}
+                      >
                         <img 
                           src={item.thumbnail} 
                           alt={item.title}
@@ -373,7 +383,10 @@ export function PlaylistManager() {
                   {activePlaylist.items.map((item, index) => (
                     <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg">
                       <div className="text-muted-foreground w-6">#{index + 1}</div>
-                      <div className="bg-muted rounded-md w-16 h-16 flex-shrink-0 overflow-hidden">
+                      <div 
+                        className="bg-muted rounded-md w-16 h-16 flex-shrink-0 overflow-hidden cursor-pointer"
+                        onClick={() => handlePlayVideo(item)}
+                      >
                         <img 
                           src={item.thumbnail} 
                           alt={item.title}
@@ -421,7 +434,8 @@ export function PlaylistManager() {
                 <img 
                   src={selectedVideo.thumbnail} 
                   alt={selectedVideo.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover cursor-pointer"
+                  onClick={() => handlePlayVideo(selectedVideo)}
                 />
               </div>
               <div>
@@ -451,6 +465,56 @@ export function PlaylistManager() {
                   Select a playlist to add this video
                 </p>
               )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* YouTube Video Player Dialog */}
+      <Dialog open={isVideoDialogOpen} onOpenChange={setIsVideoDialogOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Now Playing</DialogTitle>
+            <DialogDescription>
+              {videoToPlay?.title}
+            </DialogDescription>
+          </DialogHeader>
+          {videoToPlay && (
+            <div className="space-y-4">
+              <div className="relative aspect-video bg-muted rounded-md overflow-hidden">
+                {videoToPlay.id.startsWith('youtube_') ? (
+                  <iframe
+                    src={`https://www.youtube.com/embed/${videoToPlay.id.replace('youtube_', '')}`}
+                    className="w-full h-full"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    title={videoToPlay.title}
+                  />
+                ) : (
+                  <img 
+                    src={videoToPlay.thumbnail} 
+                    alt={videoToPlay.title}
+                    className="w-full h-full object-cover"
+                  />
+                )}
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => handleAddToPlaylist(videoToPlay)}
+                  disabled={!activePlaylist}
+                  className="flex-1"
+                >
+                  Add to Playlist
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsVideoDialogOpen(false)}
+                  className="flex-1"
+                >
+                  Close
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
