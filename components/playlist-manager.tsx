@@ -316,7 +316,17 @@ export function PlaylistManager() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {searchResults.map((item) => (
                     <div key={item.id} className="flex gap-3 p-3 border rounded-lg">
-                      <div className="bg-muted rounded-md w-16 h-16 flex-shrink-0" />
+                      <div className="bg-muted rounded-md w-16 h-16 flex-shrink-0 overflow-hidden">
+                        <img 
+                          src={item.thumbnail} 
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = '/placeholder.jpg';
+                          }}
+                        />
+                      </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-medium truncate">{item.title}</h4>
                         <p className="text-sm text-muted-foreground line-clamp-2">
@@ -363,7 +373,17 @@ export function PlaylistManager() {
                   {activePlaylist.items.map((item, index) => (
                     <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg">
                       <div className="text-muted-foreground w-6">#{index + 1}</div>
-                      <div className="bg-muted rounded-md w-16 h-16 flex-shrink-0" />
+                      <div className="bg-muted rounded-md w-16 h-16 flex-shrink-0 overflow-hidden">
+                        <img 
+                          src={item.thumbnail} 
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = '/placeholder.jpg';
+                          }}
+                        />
+                      </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-medium truncate">{item.title}</h4>
                         <p className="text-sm text-muted-foreground line-clamp-1">
