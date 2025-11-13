@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -234,7 +234,7 @@ export function PlaylistManager() {
   }
 
   // Function to extract YouTube ID from various sources
-  const extractYouTubeId = (element: HTMLImageElement): string | null => {
+  const extractYouTubeId = useCallback((element: HTMLImageElement): string | null => {
     // Check data-video-id attribute
     if (element.dataset.videoId) {
       return element.dataset.videoId;
@@ -257,20 +257,20 @@ export function PlaylistManager() {
     }
     
     return null;
-  };
+  }, []);
 
   // Function to open YouTube player modal
-  const openYouTubePlayer = (element: HTMLImageElement) => {
+  const openYouTubePlayer = useCallback((element: HTMLImageElement) => {
     const videoId = extractYouTubeId(element);
     if (videoId) {
       setPlayerVideoId(videoId);
       setIsPlayerModalOpen(true);
       setLastClickedThumbnail(element);
     }
-  };
+  }, [extractYouTubeId]);
 
   // Function to close YouTube player modal
-  const closeYouTubePlayer = () => {
+  const closeYouTubePlayer = useCallback(() => {
     setIsPlayerModalOpen(false);
     setPlayerVideoId(null);
     
@@ -278,7 +278,7 @@ export function PlaylistManager() {
     if (lastClickedThumbnail) {
       lastClickedThumbnail.focus();
     }
-  };
+  }, [lastClickedThumbnail]);
 
   // Handle escape key press to close modal
   useEffect(() => {
@@ -299,7 +299,7 @@ export function PlaylistManager() {
       // Re-enable body scrolling when modal is closed
       document.body.style.overflow = '';
     };
-  }, [isPlayerModalOpen]);
+  }, [isPlayerModalOpen, closeYouTubePlayer]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
