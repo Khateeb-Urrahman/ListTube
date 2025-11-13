@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -29,11 +29,6 @@ export function PlaylistManager() {
   const [error, setError] = useState<string | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [selectedVideo, setSelectedVideo] = useState<MediaItem | null>(null)
-  
-  // YouTube player modal state
-  const [isPlayerModalOpen, setIsPlayerModalOpen] = useState(false)
-  const [playerVideoId, setPlayerVideoId] = useState<string | null>(null)
-  const lastClickedThumbnailRef = useRef<HTMLElement | null>(null)
 
   // Load playlists on component mount and when user changes
   useEffect(() => {
@@ -233,74 +228,6 @@ export function PlaylistManager() {
     )
   }
 
-  // Function to extract YouTube ID from various sources
-  const extractYouTubeId = useCallback((element: HTMLImageElement): string | null => {
-    // Check data-video-id attribute
-    if (element.dataset.videoId) {
-      return element.dataset.videoId;
-    }
-    
-    // Check alt attribute for pattern "YouTube Video: VIDEO_ID"
-    if (element.alt && element.alt.startsWith('YouTube Video: ')) {
-      const parts = element.alt.split('YouTube Video: ');
-      if (parts.length > 1) {
-        return parts[1];
-      }
-    }
-    
-    // Check src attribute for YouTube thumbnail pattern
-    if (element.src && element.src.includes('youtube.com/vi/')) {
-      const match = element.src.match(/youtube\.com\/vi\/([^/]+)/);
-      if (match && match[1]) {
-        return match[1];
-      }
-    }
-    
-    return null;
-  }, []);
-
-  // Function to open YouTube player modal
-  const openYouTubePlayer = useCallback((element: HTMLImageElement) => {
-    const videoId = extractYouTubeId(element);
-    if (videoId) {
-      setPlayerVideoId(videoId);
-      setIsPlayerModalOpen(true);
-      lastClickedThumbnailRef.current = element;
-    }
-  }, [extractYouTubeId]);
-
-  // Function to close YouTube player modal
-  const closeYouTubePlayer = useCallback(() => {
-    setIsPlayerModalOpen(false);
-    setPlayerVideoId(null);
-    
-    // Return focus to the last clicked thumbnail
-    if (lastClickedThumbnailRef.current) {
-      lastClickedThumbnailRef.current.focus();
-    }
-  }, []);
-
-  // Handle escape key press to close modal
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isPlayerModalOpen) {
-        closeYouTubePlayer();
-      }
-    };
-
-    if (isPlayerModalOpen) {
-      document.addEventListener('keydown', handleEscape);
-      // Prevent body scrolling when modal is open
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      // Re-enable body scrolling when modal is closed
-      document.body.style.overflow = '';
-    };
-  }, [isPlayerModalOpen, closeYouTubePlayer]);
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {error && (
@@ -391,16 +318,9 @@ export function PlaylistManager() {
                     <div key={item.id} className="flex gap-3 p-3 border rounded-lg">
                       <div 
                         className="bg-muted rounded-md w-16 h-16 flex-shrink-0 overflow-hidden cursor-pointer"
-                        onClick={(e) => {
-                          const imgElement = e.currentTarget.querySelector('img');
-                          if (imgElement && item.id.startsWith('youtube_')) {
-                            openYouTubePlayer(imgElement);
-                          } else if (item.id.startsWith('youtube_')) {
-                            // Fallback if we can't get the img element
-                            const videoId = item.id.replace('youtube_', '');
-                            setPlayerVideoId(videoId);
-                            setIsPlayerModalOpen(true);
-                            lastClickedThumbnailRef.current = e.currentTarget;
+                        onClick={() => {
+                          if (item.id.startsWith('youtube_')) {
+                            window.open(`https://www.youtube.com/watch?v=${item.id.replace('youtube_', '')}`, '_blank');
                           } else {
                             // For non-YouTube videos, we could implement a different playback method
                             // For now, we'll just log to console
@@ -466,16 +386,9 @@ export function PlaylistManager() {
                       <div className="text-muted-foreground w-6">#{index + 1}</div>
                       <div 
                         className="bg-muted rounded-md w-16 h-16 flex-shrink-0 overflow-hidden cursor-pointer"
-                        onClick={(e) => {
-                          const imgElement = e.currentTarget.querySelector('img');
-                          if (imgElement && item.id.startsWith('youtube_')) {
-                            openYouTubePlayer(imgElement);
-                          } else if (item.id.startsWith('youtube_')) {
-                            // Fallback if we can't get the img element
-                            const videoId = item.id.replace('youtube_', '');
-                            setPlayerVideoId(videoId);
-                            setIsPlayerModalOpen(true);
-                            lastClickedThumbnailRef.current = e.currentTarget;
+                        onClick={() => {
+                          if (item.id.startsWith('youtube_')) {
+                            window.open(`https://www.youtube.com/watch?v=${item.id.replace('youtube_', '')}`, '_blank');
                           } else {
                             // For non-YouTube videos, we could implement a different playback method
                             // For now, we'll just log to console
@@ -515,41 +428,6 @@ export function PlaylistManager() {
         )}
       </div>
 
-      {/* YouTube Player Modal */}
-      {isPlayerModalOpen && playerVideoId && (
-        <div 
-          className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label="YouTube Video Player"
-          onClick={(e) => {
-            // Close modal when clicking outside the iframe
-            if (e.target === e.currentTarget) {
-              closeYouTubePlayer();
-            }
-          }}
-        >
-          <div className="relative w-full max-w-4xl aspect-video">
-            <button
-              className="absolute -top-12 right-0 text-white bg-black/50 rounded-full p-2 hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white"
-              onClick={closeYouTubePlayer}
-              aria-label="Close video player"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            <iframe
-              src={`https://www.youtube.com/embed/${playerVideoId}?autoplay=1&modestbranding=1&rel=0`}
-              className="w-full h-full rounded-lg"
-              allow="autoplay; fullscreen"
-              allowFullScreen
-              title="YouTube Video Player"
-            />
-          </div>
-        </div>
-      )}
-
       {/* YouTube Video Preview Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-md">
@@ -566,16 +444,9 @@ export function PlaylistManager() {
                   src={selectedVideo.thumbnail} 
                   alt={selectedVideo.title}
                   className="w-full h-full object-cover cursor-pointer"
-                  onClick={(e) => {
-                    const imgElement = e.currentTarget;
-                    if (imgElement && selectedVideo.id.startsWith('youtube_')) {
-                      openYouTubePlayer(imgElement);
-                    } else if (selectedVideo.id.startsWith('youtube_')) {
-                      // Fallback if needed
-                      const videoId = selectedVideo.id.replace('youtube_', '');
-                      setPlayerVideoId(videoId);
-                      setIsPlayerModalOpen(true);
-                      lastClickedThumbnailRef.current = e.currentTarget;
+                  onClick={() => {
+                    if (selectedVideo.id.startsWith('youtube_')) {
+                      window.open(`https://www.youtube.com/watch?v=${selectedVideo.id.replace('youtube_', '')}`, '_blank');
                     } else {
                       // For non-YouTube videos, we could implement a different playback method
                       // For now, we'll just log to console
@@ -618,3 +489,5 @@ export function PlaylistManager() {
     </div>
   )
 }
+
+export default PlaylistManager;
