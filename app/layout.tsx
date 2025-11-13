@@ -38,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <head>
-        <script src="/lib/youtube-player.js" defer />
+        <script src="/youtube-player.js" defer />
       </head>
       <body className={`${geist.className} antialiased`}>
         <AuthProvider>
