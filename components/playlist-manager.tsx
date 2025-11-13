@@ -229,7 +229,7 @@ export function PlaylistManager() {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-20">
       {error && (
         <div className="col-span-full">
           <Alert variant="destructive">
@@ -240,9 +240,9 @@ export function PlaylistManager() {
       
       {/* Playlist Sidebar */}
       <div className="lg:col-span-1 space-y-4">
-        <Card>
+        <Card className="playlist-sidebar">
           <CardHeader>
-            <CardTitle>Playlists</CardTitle>
+            <CardTitle className="text-foreground">Playlists</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex gap-2 mb-4">
@@ -250,24 +250,25 @@ export function PlaylistManager() {
                 placeholder="New playlist name"
                 value={newPlaylistName}
                 onChange={(e) => setNewPlaylistName(e.target.value)}
+                className="search-input"
               />
-              <Button onClick={createPlaylist}>+</Button>
+              <Button className="search-button">+</Button>
             </div>
             
-            <ScrollArea className="h-[300px]">
+            <ScrollArea className="h-[300px] pr-2">
               <div className="space-y-2">
                 {playlists.map((playlist) => (
                   <div 
                     key={playlist.id}
-                    className={`p-3 rounded-lg cursor-pointer flex justify-between items-center ${
+                    className={`playlist-card cursor-pointer flex justify-between items-center transition-smooth ${
                       activePlaylist?.id === playlist.id 
-                        ? "bg-primary/20" 
-                        : "hover:bg-accent"
+                        ? "playlist-card active" 
+                        : ""
                     }`}
                     onClick={() => setActivePlaylist(playlist)}
                   >
                     <div>
-                      <div className="font-medium">{playlist.name}</div>
+                      <div className="font-medium text-foreground">{playlist.name}</div>
                       <div className="text-xs text-muted-foreground">
                         {playlist.items.length} items
                       </div>
@@ -279,6 +280,7 @@ export function PlaylistManager() {
                         e.stopPropagation()
                         deletePlaylist(playlist.id)
                       }}
+                      className="text-muted-foreground hover:text-accent transition-smooth"
                     >
                       Delete
                     </Button>
@@ -293,9 +295,9 @@ export function PlaylistManager() {
       {/* Main Content Area */}
       <div className="lg:col-span-2 space-y-6">
         {/* Search Section */}
-        <Card>
+        <Card className="glass rounded-2xl p-6">
           <CardHeader>
-            <CardTitle>Search Media</CardTitle>
+            <CardTitle className="text-foreground">Search Media</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex gap-2 mb-4">
@@ -304,41 +306,54 @@ export function PlaylistManager() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                className="search-input flex-1"
               />
-              <Button onClick={handleSearch} disabled={isLoading}>
+              <Button 
+                onClick={handleSearch} 
+                disabled={isLoading}
+                className="search-button"
+              >
                 {isLoading ? "Searching..." : "Search"}
               </Button>
             </div>
 
             {searchResults.length > 0 && (
               <div className="space-y-4">
-                <h3 className="font-medium">Search Results</h3>
+                <h3 className="font-medium text-foreground">Search Results</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {searchResults.map((item) => (
-                    <div key={item.id} className="flex gap-3 p-3 border rounded-lg">
+                    <div key={item.id} className="video-card">
                       <div 
-                        className="bg-muted rounded-md w-16 h-16 flex-shrink-0 overflow-hidden cursor-pointer youtube-thumbnail"
-                        data-video-id={item.id.startsWith('youtube_') ? item.id.replace('youtube_', '') : undefined}
+                        className="flex gap-3"
                       >
-                        <img 
-                          src={item.thumbnail} 
-                          alt={item.title}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = '/placeholder.jpg';
-                          }}
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium w-full text-foreground overflow-hidden text-ellipsis whitespace-nowrap">{item.title}</h4>
-                        <p className="text-sm text-muted-foreground line-clamp-2">
-                          {item.description}
-                        </p>
-                        <div className="flex gap-2 mt-2">
-                          <Button size="sm" onClick={() => activePlaylist && addToPlaylist(activePlaylist.id, item)}>
-                            Add to Playlist
-                          </Button>
+                        <div 
+                          className="bg-muted rounded-lg w-16 h-16 flex-shrink-0 overflow-hidden cursor-pointer video-thumbnail youtube-thumbnail"
+                          data-video-id={item.id.startsWith('youtube_') ? item.id.replace('youtube_', '') : undefined}
+                        >
+                          <img 
+                            src={item.thumbnail} 
+                            alt={item.title}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = '/placeholder.jpg';
+                            }}
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium w-full text-foreground overflow-hidden text-ellipsis whitespace-nowrap">{item.title}</h4>
+                          <p className="text-sm text-muted-foreground line-clamp-2">
+                            {item.description}
+                          </p>
+                          <div className="flex gap-2 mt-2">
+                            <Button 
+                              size="sm" 
+                              onClick={() => activePlaylist && addToPlaylist(activePlaylist.id, item)}
+                              className="bg-accent hover:bg-accent/90 text-accent-foreground transition-smooth"
+                            >
+                              Add to Playlist
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -357,11 +372,15 @@ export function PlaylistManager() {
 
         {/* Active Playlist */}
         {activePlaylist && (
-          <Card>
+          <Card className="glass rounded-2xl p-6">
             <CardHeader>
               <div className="flex justify-between items-center">
-                <CardTitle>{activePlaylist.name}</CardTitle>
-                <Button variant="outline" size="sm">
+                <CardTitle className="text-foreground">{activePlaylist.name}</CardTitle>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="border-accent/30 text-accent hover:bg-accent/10 transition-smooth"
+                >
                   Play All
                 </Button>
               </div>
@@ -374,35 +393,38 @@ export function PlaylistManager() {
               ) : (
                 <div className="space-y-3">
                   {activePlaylist.items.map((item, index) => (
-                    <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg">
-                      <div className="text-muted-foreground w-6">#{index + 1}</div>
-                      <div 
-                        className="bg-muted rounded-md w-16 h-16 flex-shrink-0 overflow-hidden cursor-pointer youtube-thumbnail"
-                        data-video-id={item.id.startsWith('youtube_') ? item.id.replace('youtube_', '') : undefined}
-                      >
-                        <img 
-                          src={item.thumbnail} 
-                          alt={item.title}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = '/placeholder.jpg';
-                          }}
-                        />
+                    <div key={item.id} className="video-card">
+                      <div className="flex items-center gap-3">
+                        <div className="text-muted-foreground w-6">#{index + 1}</div>
+                        <div 
+                          className="bg-muted rounded-lg w-16 h-16 flex-shrink-0 overflow-hidden cursor-pointer video-thumbnail youtube-thumbnail"
+                          data-video-id={item.id.startsWith('youtube_') ? item.id.replace('youtube_', '') : undefined}
+                        >
+                          <img 
+                            src={item.thumbnail} 
+                            alt={item.title}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = '/placeholder.jpg';
+                            }}
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium w-full text-foreground overflow-hidden text-ellipsis whitespace-nowrap">{item.title}</h4>
+                          <p className="text-sm text-muted-foreground line-clamp-1">
+                            {item.description}
+                          </p>
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => removeFromPlaylist(activePlaylist.id, item.id)}
+                          className="text-muted-foreground hover:text-accent transition-smooth"
+                        >
+                          Remove
+                        </Button>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium w-full text-foreground overflow-hidden text-ellipsis whitespace-nowrap">{item.title}</h4>
-                        <p className="text-sm text-muted-foreground line-clamp-1">
-                          {item.description}
-                        </p>
-                      </div>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => removeFromPlaylist(activePlaylist.id, item.id)}
-                      >
-                        Remove
-                      </Button>
                     </div>
                   ))}
                 </div>
@@ -414,16 +436,16 @@ export function PlaylistManager() {
 
       {/* YouTube Video Preview Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="glass max-w-md rounded-2xl border border-accent/30">
           <DialogHeader>
-            <DialogTitle>YouTube Video Preview</DialogTitle>
+            <DialogTitle className="text-foreground">YouTube Video Preview</DialogTitle>
             <DialogDescription>
               Preview of the YouTube video you're about to add to your playlist
             </DialogDescription>
           </DialogHeader>
           {selectedVideo && (
             <div className="space-y-4">
-              <div className="relative aspect-video bg-muted rounded-md overflow-hidden">
+              <div className="relative aspect-video bg-muted rounded-lg overflow-hidden video-thumbnail">
                 <img 
                   src={selectedVideo.thumbnail} 
                   alt={selectedVideo.title}
@@ -441,14 +463,14 @@ export function PlaylistManager() {
                 <Button 
                   onClick={() => handleAddToPlaylist(selectedVideo)}
                   disabled={!activePlaylist}
-                  className="flex-1"
+                  className="flex-1 search-button"
                 >
                   Add to Playlist
                 </Button>
                 <Button 
                   variant="outline" 
                   onClick={() => setIsDialogOpen(false)}
-                  className="flex-1"
+                  className="flex-1 border-accent/30 text-accent hover:bg-accent/10 transition-smooth"
                 >
                   Close
                 </Button>
