@@ -229,7 +229,7 @@ export function PlaylistManager() {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-20">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {error && (
         <div className="col-span-full">
           <Alert variant="destructive">
@@ -240,9 +240,9 @@ export function PlaylistManager() {
       
       {/* Playlist Sidebar */}
       <div className="lg:col-span-1 space-y-4">
-        <Card className="playlist-sidebar">
+        <Card>
           <CardHeader>
-            <CardTitle className="text-foreground">Playlists</CardTitle>
+            <CardTitle>Playlists</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex gap-2 mb-4">
@@ -250,9 +250,8 @@ export function PlaylistManager() {
                 placeholder="New playlist name"
                 value={newPlaylistName}
                 onChange={(e) => setNewPlaylistName(e.target.value)}
-                className="search-input"
               />
-              <Button className="search-button">+</Button>
+              <Button onClick={createPlaylist}>+</Button>
             </div>
             
             <ScrollArea className="h-[300px] pr-2">
@@ -260,15 +259,15 @@ export function PlaylistManager() {
                 {playlists.map((playlist) => (
                   <div 
                     key={playlist.id}
-                    className={`playlist-card cursor-pointer flex justify-between items-center transition-smooth ${
+                    className={`p-3 rounded-lg cursor-pointer flex justify-between items-center ${
                       activePlaylist?.id === playlist.id 
-                        ? "playlist-card active" 
-                        : ""
+                        ? "bg-orange-500/20 border border-orange-500/30" 
+                        : "bg-muted hover:bg-muted/50"
                     }`}
                     onClick={() => setActivePlaylist(playlist)}
                   >
                     <div>
-                      <div className="font-medium text-foreground">{playlist.name}</div>
+                      <div className="font-medium">{playlist.name}</div>
                       <div className="text-xs text-muted-foreground">
                         {playlist.items.length} items
                       </div>
@@ -280,7 +279,6 @@ export function PlaylistManager() {
                         e.stopPropagation()
                         deletePlaylist(playlist.id)
                       }}
-                      className="text-muted-foreground hover:text-accent transition-smooth"
                     >
                       Delete
                     </Button>
@@ -295,9 +293,9 @@ export function PlaylistManager() {
       {/* Main Content Area */}
       <div className="lg:col-span-2 space-y-6">
         {/* Search Section */}
-        <Card className="glass rounded-2xl p-6">
+        <Card>
           <CardHeader>
-            <CardTitle className="text-foreground">Search Media</CardTitle>
+            <CardTitle>Search Media</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex gap-2 mb-4">
@@ -306,54 +304,49 @@ export function PlaylistManager() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                className="search-input flex-1"
               />
-              <Button 
-                onClick={handleSearch} 
-                disabled={isLoading}
-                className="search-button"
-              >
+              <Button onClick={handleSearch} disabled={isLoading}>
                 {isLoading ? "Searching..." : "Search"}
               </Button>
             </div>
 
             {searchResults.length > 0 && (
               <div className="space-y-4">
-                <h3 className="font-medium text-foreground">Search Results</h3>
+                <h3 className="font-medium">Search Results</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {searchResults.map((item) => (
-                    <div key={item.id} className="video-card">
+                    <div key={item.id} className="flex gap-3 p-3 border rounded-lg">
                       <div 
-                        className="flex gap-3"
+                        className="bg-muted rounded-md w-16 h-16 flex-shrink-0 overflow-hidden cursor-pointer"
+                        onClick={() => {
+                          if (item.id.startsWith('youtube_')) {
+                            window.open(`https://www.youtube.com/watch?v=${item.id.replace('youtube_', '')}`, '_blank');
+                          } else {
+                            // For non-YouTube videos, we could implement a different playback method
+                            // For now, we'll just log to console
+                            console.log('Non-YouTube video clicked:', item);
+                          }
+                        }}
                       >
-                        <div 
-                          className="bg-muted rounded-lg w-16 h-16 flex-shrink-0 overflow-hidden cursor-pointer video-thumbnail youtube-thumbnail"
-                          data-video-id={item.id.startsWith('youtube_') ? item.id.replace('youtube_', '') : undefined}
-                        >
-                          <img 
-                            src={item.thumbnail} 
-                            alt={item.title}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.src = '/placeholder.jpg';
-                            }}
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-medium w-full text-foreground overflow-hidden text-ellipsis whitespace-nowrap">{item.title}</h4>
-                          <p className="text-sm text-muted-foreground line-clamp-2">
-                            {item.description}
-                          </p>
-                          <div className="flex gap-2 mt-2">
-                            <Button 
-                              size="sm" 
-                              onClick={() => activePlaylist && addToPlaylist(activePlaylist.id, item)}
-                              className="bg-accent hover:bg-accent/90 text-accent-foreground transition-smooth"
-                            >
-                              Add to Playlist
-                            </Button>
-                          </div>
+                        <img 
+                          src={item.thumbnail} 
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = '/placeholder.jpg';
+                          }}
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium w-full overflow-hidden text-ellipsis whitespace-nowrap">{item.title}</h4>
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {item.description}
+                        </p>
+                        <div className="flex gap-2 mt-2">
+                          <Button size="sm" onClick={() => activePlaylist && addToPlaylist(activePlaylist.id, item)}>
+                            Add to Playlist
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -372,15 +365,11 @@ export function PlaylistManager() {
 
         {/* Active Playlist */}
         {activePlaylist && (
-          <Card className="glass rounded-2xl p-6">
+          <Card>
             <CardHeader>
               <div className="flex justify-between items-center">
-                <CardTitle className="text-foreground">{activePlaylist.name}</CardTitle>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="border-accent/30 text-accent hover:bg-accent/10 transition-smooth"
-                >
+                <CardTitle>{activePlaylist.name}</CardTitle>
+                <Button variant="outline" size="sm">
                   Play All
                 </Button>
               </div>
@@ -393,38 +382,43 @@ export function PlaylistManager() {
               ) : (
                 <div className="space-y-3">
                   {activePlaylist.items.map((item, index) => (
-                    <div key={item.id} className="video-card">
-                      <div className="flex items-center gap-3">
-                        <div className="text-muted-foreground w-6">#{index + 1}</div>
-                        <div 
-                          className="bg-muted rounded-lg w-16 h-16 flex-shrink-0 overflow-hidden cursor-pointer video-thumbnail youtube-thumbnail"
-                          data-video-id={item.id.startsWith('youtube_') ? item.id.replace('youtube_', '') : undefined}
-                        >
-                          <img 
-                            src={item.thumbnail} 
-                            alt={item.title}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.src = '/placeholder.jpg';
-                            }}
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-medium w-full text-foreground overflow-hidden text-ellipsis whitespace-nowrap">{item.title}</h4>
-                          <p className="text-sm text-muted-foreground line-clamp-1">
-                            {item.description}
-                          </p>
-                        </div>
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          onClick={() => removeFromPlaylist(activePlaylist.id, item.id)}
-                          className="text-muted-foreground hover:text-accent transition-smooth"
-                        >
-                          Remove
-                        </Button>
+                    <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg">
+                      <div className="text-muted-foreground w-6">#{index + 1}</div>
+                      <div 
+                        className="bg-muted rounded-md w-16 h-16 flex-shrink-0 overflow-hidden cursor-pointer"
+                        onClick={() => {
+                          if (item.id.startsWith('youtube_')) {
+                            window.open(`https://www.youtube.com/watch?v=${item.id.replace('youtube_', '')}`, '_blank');
+                          } else {
+                            // For non-YouTube videos, we could implement a different playback method
+                            // For now, we'll just log to console
+                            console.log('Non-YouTube video clicked:', item);
+                          }
+                        }}
+                      >
+                        <img 
+                          src={item.thumbnail} 
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = '/placeholder.jpg';
+                          }}
+                        />
                       </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium w-full overflow-hidden text-ellipsis whitespace-nowrap">{item.title}</h4>
+                        <p className="text-sm text-muted-foreground line-clamp-1">
+                          {item.description}
+                        </p>
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => removeFromPlaylist(activePlaylist.id, item.id)}
+                      >
+                        Remove
+                      </Button>
                     </div>
                   ))}
                 </div>
@@ -436,25 +430,33 @@ export function PlaylistManager() {
 
       {/* YouTube Video Preview Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="glass max-w-md rounded-2xl border border-accent/30">
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-foreground">YouTube Video Preview</DialogTitle>
+            <DialogTitle>YouTube Video Preview</DialogTitle>
             <DialogDescription>
               Preview of the YouTube video you're about to add to your playlist
             </DialogDescription>
           </DialogHeader>
           {selectedVideo && (
             <div className="space-y-4">
-              <div className="relative aspect-video bg-muted rounded-lg overflow-hidden video-thumbnail">
+              <div className="relative aspect-video bg-muted rounded-md overflow-hidden">
                 <img 
                   src={selectedVideo.thumbnail} 
                   alt={selectedVideo.title}
                   className="w-full h-full object-cover cursor-pointer"
-                  data-video-id={selectedVideo.id.startsWith('youtube_') ? selectedVideo.id.replace('youtube_', '') : undefined}
+                  onClick={() => {
+                    if (selectedVideo.id.startsWith('youtube_')) {
+                      window.open(`https://www.youtube.com/watch?v=${selectedVideo.id.replace('youtube_', '')}`, '_blank');
+                    } else {
+                      // For non-YouTube videos, we could implement a different playback method
+                      // For now, we'll just log to console
+                      console.log('Non-YouTube video clicked:', selectedVideo);
+                    }
+                  }}
                 />
               </div>
               <div>
-                <h3 className="font-medium line-clamp-2 w-full text-foreground overflow-hidden text-ellipsis whitespace-nowrap">{selectedVideo.title}</h3>
+                <h3 className="font-medium line-clamp-2 w-full overflow-hidden text-ellipsis whitespace-nowrap">{selectedVideo.title}</h3>
                 <p className="text-sm text-muted-foreground mt-1 line-clamp-3">
                   {selectedVideo.description}
                 </p>
@@ -463,14 +465,14 @@ export function PlaylistManager() {
                 <Button 
                   onClick={() => handleAddToPlaylist(selectedVideo)}
                   disabled={!activePlaylist}
-                  className="flex-1 search-button"
+                  className="flex-1"
                 >
                   Add to Playlist
                 </Button>
                 <Button 
                   variant="outline" 
                   onClick={() => setIsDialogOpen(false)}
-                  className="flex-1 border-accent/30 text-accent hover:bg-accent/10 transition-smooth"
+                  className="flex-1"
                 >
                   Close
                 </Button>

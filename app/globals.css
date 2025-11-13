@@ -4,206 +4,35 @@
 
 @layer base {
   :root {
-    --background: 12 12 12; /* Deep charcoal black */
-    --foreground: 240 240 240; /* Light gray */
-    --card: 20 20 20; /* Slightly lighter gray for cards */
-    --card-foreground: 240 240 240;
-    --popover: 25 25 25; /* Popover background */
-    --popover-foreground: 240 240 240;
-    --primary: 250 250 250; /* White for primary text */
-    --primary-foreground: 0 0 0; /* Black for primary text foreground */
-    --secondary: 40 40 40; /* Medium gray */
-    --secondary-foreground: 240 240 240;
-    --muted: 50 50 50; /* Muted gray */
-    --muted-foreground: 180 180 180;
-    --accent: 230 80 80; /* Matte red accent */
-    --accent-foreground: 250 250 250;
-    --destructive: 230 60 60; /* Red for destructive actions */
-    --destructive-foreground: 250 250 250;
-    --border: 60 60 60; /* Border color */
-    --input: 60 60 60; /* Input border */
-    --ring: 230 80 80; /* Ring color (same as accent) */
-    --radius: 0.5rem; /* Border radius */
+    --background: 0 0 0;
+    --foreground: 255 255 255;
+    --card: 23 23 23;
+    --card-foreground: 255 255 255;
+    --popover: 23 23 23;
+    --popover-foreground: 255 255 255;
+    --primary: 255 255 255;
+    --primary-foreground: 0 0 0;
+    --secondary: 163 163 163;
+    --secondary-foreground: 0 0 0;
+    --muted: 38 38 38;
+    --muted-foreground: 163 163 163;
+    --accent: 200 200 200;
+    --accent-foreground: 0 0 0;
+    --destructive: 235 64 64;
+    --destructive-foreground: 255 255 255;
+    --border: 38 38 38;
+    --input: 38 38 38;
+    --ring: 163 163 163;
+    --radius: 0.5rem;
   }
 }
 
 @layer base {
   * {
-    @apply border-[hsl(var(--border))];
+    border-color: hsl(var(--border));
   }
   body {
-    @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
-}
-
-/* Premium UI Enhancements */
-
-/* Navigation bar with glass effect */
-.navbar-glass {
-  background: rgba(30, 30, 30, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(80, 80, 80, 0.18);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  padding: 0.75rem 1rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-/* Premium logo with glow effect */
-.logo-glow {
-  color: hsl(var(--foreground));
-  font-weight: 700;
-  font-size: 1.25rem;
-  text-shadow: 0 0 8px rgba(230, 80, 80, 0.4);
-  transition: all 0.3s ease;
-}
-
-.logo-glow:hover {
-  text-shadow: 0 0 12px rgba(230, 80, 80, 0.7);
-}
-
-/* Smooth hover animations for icons and menu text */
-.nav-icon, .nav-text {
-  transition: all 0.3s ease-in-out;
-}
-
-.nav-icon:hover, .nav-text:hover {
-  color: hsl(var(--accent));
-  transform: scale(1.05);
-  text-shadow: 0 0 8px rgba(230, 80, 80, 0.3);
-}
-
-/* Playlist sidebar styling */
-.playlist-sidebar {
-  background: rgba(30, 30, 30, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(80, 80, 80, 0.18);
-  border-radius: 1rem;
-  padding: 1rem;
-  height: 100%;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-}
-
-/* Modern playlist cards */
-.playlist-card {
-  background: rgba(30, 30, 30, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(80, 80, 80, 0.18);
-  border-radius: 0.75rem;
-  padding: 1rem;
-  margin-bottom: 0.75rem;
-  transition: all 0.3s ease-in-out;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.playlist-card:hover {
-  background-color: hsla(var(--accent), 0.1);
-  box-shadow: 0 6px 16px rgba(230, 80, 80, 0.2);
-  transform: translateY(-2px);
-}
-
-.playlist-card.active {
-  background-color: hsla(var(--accent), 0.2);
-  border: 1px solid hsla(var(--accent), 0.3);
-}
-
-/* Premium search input with glassmorphism */
-.search-input {
-  background: rgba(30, 30, 30, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(80, 80, 80, 0.18);
-  border-radius: 9999px;
-  padding: 0.75rem 1.25rem;
-  color: hsl(var(--foreground));
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.search-input:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(230, 80, 80, 0.2), 0 0 0 3px hsla(var(--accent), 0.5);
-}
-
-/* Modern search button */
-.search-button {
-  background-color: hsl(var(--accent));
-  color: hsl(var(--accent-foreground));
-  font-weight: 500;
-  border-radius: 9999px;
-  padding: 0.75rem 1.5rem;
-  transition: all 0.3s ease-in-out;
-  box-shadow: 0 4px 12px rgba(230, 80, 80, 0.25);
-}
-
-.search-button:hover {
-  background-color: hsl(var(--accent));
-  opacity: 0.9;
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(230, 80, 80, 0.35);
-}
-
-/* Premium video cards */
-.video-card {
-  background: rgba(30, 30, 30, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(80, 80, 80, 0.18);
-  border-radius: 0.75rem;
-  padding: 1rem;
-  transition: all 0.3s ease-in-out;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.video-card:hover {
-  border: 1px solid hsla(var(--accent), 0.3);
-  box-shadow: 0 6px 16px rgba(230, 80, 80, 0.2);
-  transform: translateY(-3px);
-}
-
-/* Video thumbnail styling */
-.video-thumbnail {
-  border-radius: 0.5rem;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.video-thumbnail:hover {
-  transform: scale(1.05);
-}
-
-/* Smooth transitions for all interactive elements */
-.transition-smooth {
-  transition: all 0.3s ease-in-out;
-}
-
-/* Premium scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: hsla(var(--muted), 0.3);
-  border-radius: 9999px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: hsla(var(--accent), 0.5);
-  border-radius: 9999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: hsla(var(--accent), 0.7);
-}
-
-/* Focus ring for accessibility */
-.focus-ring {
-  outline: none;
-  box-shadow: 0 0 0 2px hsla(var(--accent), 0.5), 0 0 0 4px hsl(var(--background));
 }
