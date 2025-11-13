@@ -317,16 +317,8 @@ export function PlaylistManager() {
                   {searchResults.map((item) => (
                     <div key={item.id} className="flex gap-3 p-3 border rounded-lg">
                       <div 
-                        className="bg-muted rounded-md w-16 h-16 flex-shrink-0 overflow-hidden cursor-pointer"
-                        onClick={() => {
-                          if (item.id.startsWith('youtube_')) {
-                            window.open(`https://www.youtube.com/watch?v=${item.id.replace('youtube_', '')}`, '_blank');
-                          } else {
-                            // For non-YouTube videos, we could implement a different playback method
-                            // For now, we'll just log to console
-                            console.log('Non-YouTube video clicked:', item);
-                          }
-                        }}
+                        className="bg-muted rounded-md w-16 h-16 flex-shrink-0 overflow-hidden cursor-pointer youtube-thumbnail"
+                        data-video-id={item.id.startsWith('youtube_') ? item.id.replace('youtube_', '') : undefined}
                       >
                         <img 
                           src={item.thumbnail} 
@@ -385,16 +377,8 @@ export function PlaylistManager() {
                     <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg">
                       <div className="text-muted-foreground w-6">#{index + 1}</div>
                       <div 
-                        className="bg-muted rounded-md w-16 h-16 flex-shrink-0 overflow-hidden cursor-pointer"
-                        onClick={() => {
-                          if (item.id.startsWith('youtube_')) {
-                            window.open(`https://www.youtube.com/watch?v=${item.id.replace('youtube_', '')}`, '_blank');
-                          } else {
-                            // For non-YouTube videos, we could implement a different playback method
-                            // For now, we'll just log to console
-                            console.log('Non-YouTube video clicked:', item);
-                          }
-                        }}
+                        className="bg-muted rounded-md w-16 h-16 flex-shrink-0 overflow-hidden cursor-pointer youtube-thumbnail"
+                        data-video-id={item.id.startsWith('youtube_') ? item.id.replace('youtube_', '') : undefined}
                       >
                         <img 
                           src={item.thumbnail} 
@@ -444,15 +428,7 @@ export function PlaylistManager() {
                   src={selectedVideo.thumbnail} 
                   alt={selectedVideo.title}
                   className="w-full h-full object-cover cursor-pointer"
-                  onClick={() => {
-                    if (selectedVideo.id.startsWith('youtube_')) {
-                      window.open(`https://www.youtube.com/watch?v=${selectedVideo.id.replace('youtube_', '')}`, '_blank');
-                    } else {
-                      // For non-YouTube videos, we could implement a different playback method
-                      // For now, we'll just log to console
-                      console.log('Non-YouTube video clicked:', selectedVideo);
-                    }
-                  }}
+                  data-video-id={selectedVideo.id.startsWith('youtube_') ? selectedVideo.id.replace('youtube_', '') : undefined}
                 />
               </div>
               <div>
