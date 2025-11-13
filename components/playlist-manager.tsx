@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -33,7 +33,7 @@ export function PlaylistManager() {
   // YouTube player modal state
   const [isPlayerModalOpen, setIsPlayerModalOpen] = useState(false)
   const [playerVideoId, setPlayerVideoId] = useState<string | null>(null)
-  const [lastClickedThumbnail, setLastClickedThumbnail] = useState<HTMLElement | null>(null)
+  const lastClickedThumbnailRef = useRef<HTMLElement | null>(null)
 
   // Load playlists on component mount and when user changes
   useEffect(() => {
@@ -265,7 +265,7 @@ export function PlaylistManager() {
     if (videoId) {
       setPlayerVideoId(videoId);
       setIsPlayerModalOpen(true);
-      setLastClickedThumbnail(element);
+      lastClickedThumbnailRef.current = element;
     }
   }, [extractYouTubeId]);
 
@@ -275,10 +275,10 @@ export function PlaylistManager() {
     setPlayerVideoId(null);
     
     // Return focus to the last clicked thumbnail
-    if (lastClickedThumbnail) {
-      lastClickedThumbnail.focus();
+    if (lastClickedThumbnailRef.current) {
+      lastClickedThumbnailRef.current.focus();
     }
-  }, [lastClickedThumbnail]);
+  }, []);
 
   // Handle escape key press to close modal
   useEffect(() => {
@@ -400,7 +400,7 @@ export function PlaylistManager() {
                             const videoId = item.id.replace('youtube_', '');
                             setPlayerVideoId(videoId);
                             setIsPlayerModalOpen(true);
-                            setLastClickedThumbnail(e.currentTarget);
+                            lastClickedThumbnailRef.current = e.currentTarget;
                           } else {
                             // For non-YouTube videos, we could implement a different playback method
                             // For now, we'll just log to console
@@ -475,7 +475,7 @@ export function PlaylistManager() {
                             const videoId = item.id.replace('youtube_', '');
                             setPlayerVideoId(videoId);
                             setIsPlayerModalOpen(true);
-                            setLastClickedThumbnail(e.currentTarget);
+                            lastClickedThumbnailRef.current = e.currentTarget;
                           } else {
                             // For non-YouTube videos, we could implement a different playback method
                             // For now, we'll just log to console
@@ -575,7 +575,7 @@ export function PlaylistManager() {
                       const videoId = selectedVideo.id.replace('youtube_', '');
                       setPlayerVideoId(videoId);
                       setIsPlayerModalOpen(true);
-                      setLastClickedThumbnail(e.currentTarget);
+                      lastClickedThumbnailRef.current = e.currentTarget;
                     } else {
                       // For non-YouTube videos, we could implement a different playback method
                       // For now, we'll just log to console
